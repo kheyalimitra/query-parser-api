@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./server.js",
-    "test": "npm test"
+    "test": "jest --coverage --coverageDirectory=coverage/jest"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
