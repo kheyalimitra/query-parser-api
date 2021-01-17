@@ -40,7 +40,11 @@ const findData = (query) =>{
 
 const handleGetQuery = (req) => {
   if (isValidURL(req)) {
-    const { query } = req.query;
+    const { 
+      query: {
+        query,
+      } = {},
+    } = req;
     console.log(`internal query string for Array filter : ${query}`);
     if (query) {
       const parsedQuery = parseQueryString(query);
@@ -48,7 +52,6 @@ const handleGetQuery = (req) => {
     } else {
       return Object.values(DYNAMIC_DATA_STORAGE);
     }
-
   } else {
     return null;
   }
@@ -86,12 +89,17 @@ const handlePostRequest = (req) =>  {
       views,
       timestamp = Date.now(), // optional field
     } = req.body;
-    // Since the ID will be unique, just override if existing. 
-    DYNAMIC_DATA_STORAGE[id] = {id, title, content, views, timestamp};
-    return true;
+    // id value is must
+    if(id && id.length > 0) {
+      // Since the ID will be unique, just override if existing. 
+      DYNAMIC_DATA_STORAGE[id] = {id, title, content, views, timestamp};
+      return true;
+    } else {
+      return false;
+    }
   } catch (error) {
     console.log(`error occured, ${error}`);
-    return false;
+    return null;
   }
 
 }
