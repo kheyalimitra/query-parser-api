@@ -1,41 +1,38 @@
 const validUrl = require('valid-url');
 const { parseQueryString }  = require('./queryGenerator') ;
 
-const DYNAMIC_DATA_STORAGE = [
-    {
-    
-        "id": "first-post",
-        "title": "My First Post",
-        "content": "Hello World!",
-        "views": 100,
-        "timestamp": 1555832341
-    },
-    {
-    
-        "id": "second-post",
-        "title": "My second Post",
-        "content": "Hello World!",
-        "views": 10,
-        "timestamp": 1555832354
-    }
-  ];
-
-const findData = (query) =>{
-  const result = DYNAMIC_DATA_STORAGE.filter((item) => {
-    return eval(`with (item) { ${query} }`);
-  }); 
-  return result;
+const DYNAMIC_DATA_STORAGE = {
+  "first-post" : {
+    "id": "first-post",
+    "title": "My First Post",
+    "content": "Hello World!",
+    "views": 100,
+    "timestamp": 1555832341
+  },
+  "second-post": {
+    "id": "second-post",
+    "title": "My second Post",
+    "content": "Hello World!",
+    "views": 10,
+    "timestamp": 1555832354
+  }
 };
 
 const isValidURL = (req) => {
-
   const urlStr = `${req.protocol}://${req.get('host')}/${req.url}`;
-  const isValid = validUrl.isUri(urlStr);
   if (validUrl.isUri(urlStr)) {
     return true;
   } else {
     return false;
   }
+};
+
+const findData = (query) =>{
+  const entries = Object.values(DYNAMIC_DATA_STORAGE);
+  const result = entries.filter((item) => {
+    return eval(`with (item) { ${query} }`);
+  }); 
+  return result;
 };
 
 const handleGetQuery = (req) => {
@@ -53,10 +50,9 @@ const handleGetQuery = (req) => {
 const getStoreDetails = (req, res) => {
   try {
     const result = handleGetQuery(req);
-    console.log ('result from handleGetQuery', result);
     if (result) {
       if (result.length > 0) {
-        res.status(200).json(result);
+        res.status(200).send(result);
       }
       else {
         //no data found
@@ -74,4 +70,39 @@ const getStoreDetails = (req, res) => {
   }
 };
 
- module.exports = {getStoreDetails};
+const handlePostRequest = (req) =>  {
+  try {
+    const {
+      id,
+      title,
+      content,
+      views,
+      timestamp = Date.now(), // optional field
+    } = req.body;
+    // Since the ID will be unique, just override if existing. 
+    DYNAMIC_DATA_STORAGE[id] = {id, title, content, views, timestamp};
+    return true;
+  } catch (error) {
+    console.log(`error occured, ${error}`);
+    return false;
+  }
+
+}
+const postStoreDetails = (req, res) => {
+  try {
+    const result = handlePostRequest(req);
+    if (result) {
+      res.status(200).send({});
+    }
+    else {
+      console.log('Invalid request.');
+      res.status(400).send({ error: 'bad request.' });
+    }
+  }
+  catch (error) {
+    console.log(`error has occured: ${error}`);
+    res.status(500).send({ error: 'something went wrong, please try with valid request.' });
+  }
+};
+
+ module.exports = {getStoreDetails, postStoreDetails};
