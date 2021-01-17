@@ -10,43 +10,49 @@ const SYMBOL_TO_OPERATORS =
   'L' : 'LESS_THAN',
 };
 
-module.exports = () => {
-  const repalceAllOps = (query) => {
+  const repalceOpsWithSymbols = (query) => {
     let modifedQuerey = query;
     /**************************************************************************************
      * For simplicity, converting all operators to single character
      * AND(EQUAL(id,'first-post'),EQUAL(views,100)) => A(E(id, 'fisrt-post'), E(view, 100))
      **************************************************************************************/
     OPERATORS.forEach((op, index) => {
-      modifedQuerey= modifedQuerey.replaceAll(op, REPLACING_SYMBOLS[index]);
+      const regx = new RegExp(op, 'g');
+      modifedQuerey = modifedQuerey.replace(regx, REPLACING_SYMBOLS[index]);
     })
     return modifedQuerey;
   }
 
   const processEquals = (query) => {
     const keyName = 'key';
-    const count = 1;
+    let count = 1;
     const keyValMap = {};
     let modifedQuerey = query;
     /***
      * convert this query A(E(id, 'fisrt-post'), E(view, 100))
      * to A(key1, key2)
      *  */ 
-    query.forEach((char, index) => {
+    let i = 0;
+    while (i < modifedQuerey.length) {
+      const char = modifedQuerey[i];
       if (char === 'E') {
-        let equalExp = query.subStrings(index+1);
-        equalExp = equalExp.subStrings(0, equalExp.indexOf(')')-1);
+        let equalExp = modifedQuerey.substr(i+1);
+        equalExp = equalExp.substr(1, equalExp.indexOf(')')-1);
         const keyVal = equalExp.split(',');
-        if(keyVal && keyVal.lengh == 2) {
+        if(keyVal && keyVal.length == 2) {
           const newKey = `${keyName}${count}`;
           keyValMap[newKey] = `${keyVal[0]} = ${keyVal[1]}`
-          modifedQuerey.replace(`E(${equalExp})`, newKey);
+          modifedQuerey = modifedQuerey.replace(`E(${equalExp})`, newKey);
           count += 1
         }
       }
-    });
+      i += 1;
+    };
     // replace all ( ) , with spaces, so new prefix expression is: A key1  key 2
-    modifedQuerey = modifedQuerey.replaceAll('(', ' ').replaceAll(')', ' ').replaceAll(',', '');
+    modifedQuerey = modifedQuerey
+      .replace(/\(/g, ' ')
+      .replace(/\)/g, ' ')
+      .replace(/\,/g, ' ');
     return { modifedQuerey, keyValMap };
   }
 
@@ -57,18 +63,21 @@ module.exports = () => {
     operands = [];
 
   // Divide modifedQuerey into two arrays, operators and operands
-  operators = modifedQuerey.split(' ').filter(function(o) {
-    if (REPLACING_SYMBOLS.includes(o)) {
-      return SYMBOL_TO_OPERATORS[o];
+  operators = modifedQuerey.split(' ').filter(function(op) {
+    if (REPLACING_SYMBOLS.includes(op)) {
+      return op;
     } else {
-      operands.push(keyValMap[o]);
+      if (op in keyValMap) {
+        operands.push(keyValMap[op]);
+      }
+
     }
   });
 
   // Merge arrays
   for (let i = 0; i < operands.length; i++) {
     if (operators[i]) {
-      response += operands[i] + ' ' + operators[i] + ' ';
+      response += operands[i] + ' ' + SYMBOL_TO_OPERATORS[operators[i]] + ' ';
     } else {
       response =
         response + operands[i] + ' ';
@@ -81,7 +90,7 @@ module.exports = () => {
   const parseQueryString = (query) => {
     try {
       if (query) {
-        const modifiedQueryStr = repalceAllOps(query);
+        const modifiedQueryStr = repalceOpsWithSymbols(query);
         const {
           modifedQuerey,
           keyValMap
@@ -91,8 +100,8 @@ module.exports = () => {
         return infixQueryExpression;
       }  
     } catch (error) {
+      console.log(`error has occurred: ${error}`);
       return '';
     }
   }
-  return { parseQueryString };
-}
+  module.exports =  { parseQueryString };
