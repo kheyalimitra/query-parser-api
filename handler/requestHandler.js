@@ -5,7 +5,7 @@ const DYNAMIC_DATA_STORAGE = [
         "id": "first-post",
         "title": "My First Post",
         "content": "Hello World!",
-        "views": 1,
+        "views": 100,
         "timestamp": 1555832341
     },
     {
@@ -19,7 +19,6 @@ const DYNAMIC_DATA_STORAGE = [
   ];
 
 const findData = (query) =>{
-  // not working
   const result = DYNAMIC_DATA_STORAGE.filter((item) => {
     return eval(`with (item) { ${query} }`);
   }); 
@@ -27,9 +26,8 @@ const findData = (query) =>{
 };
 
 const handleGetQuery = (queryStr) => {
-  // validation needed for the param
   const parsedQuery = parseQueryString(queryStr);
-  console.log(parsedQuery);
+  // validation needed for the param
   const result = findData(parsedQuery);
   return result;
 }
