@@ -99,7 +99,7 @@ const SYMBOL_TO_OPERATORS =
     return { modifedQuerey, keyValMap };
   }
 
-  const convertPrefixToInfix = (modifedQuerey, keyValMap) => {
+  const convertPrefixToInfix = (modifedQuerey, keyValMap, itemName='item') => {
     let
     response = '',
     operators = [],
@@ -120,17 +120,17 @@ const SYMBOL_TO_OPERATORS =
   // Merge arrays
   for (let i = 0; i < operands.length; i++) {
     if (operators[i]) {
-      response += operands[i] + ' ' + SYMBOL_TO_OPERATORS[operators[i]] + ' ';
+      response += `${itemName}.${operands[i]}` + ' ' + SYMBOL_TO_OPERATORS[operators[i]] + ' ';
     } else {
       response =
-        response + operands[i] + ' ';
+        response + `${itemName}.${operands[i]}` + ' ';
     }
   }
   response = response.slice(0, -1);
   return response;
   }
 
-  const parseQueryString = (query) => {
+  const parseQueryString = (query, itemName) => {
     try {
       if (query) {
         const modifiedQueryStr = repalceOpsWithSymbols(query);
@@ -139,7 +139,7 @@ const SYMBOL_TO_OPERATORS =
           keyValMap
         } = processSingleOperators(modifiedQueryStr);
 
-        const infixQueryExpression = convertPrefixToInfix(modifedQuerey, keyValMap);
+        const infixQueryExpression = convertPrefixToInfix(modifedQuerey, keyValMap, itemName);
         return infixQueryExpression;
       }  
     } catch (error) {
