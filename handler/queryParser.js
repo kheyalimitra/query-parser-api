@@ -120,10 +120,11 @@ const SYMBOL_TO_OPERATORS =
   // Merge arrays
   for (let i = 0; i < operands.length; i++) {
     if (operators[i]) {
-      response += `${itemName}.${operands[i]}` + ' ' + SYMBOL_TO_OPERATORS[operators[i]] + ' ';
+      response += operands[i] + ' ' + SYMBOL_TO_OPERATORS[operators[i]] + ' ';
+      // response += `${itemName}.${operands[i]}` + ' ' + SYMBOL_TO_OPERATORS[operators[i]] + ' ';
     } else {
-      response =
-        response + `${itemName}.${operands[i]}` + ' ';
+      response = response + operands[i] + ' ';
+        // response + `${itemName}.${operands[i]}` + ' ';
     }
   }
   response = response.slice(0, -1);

@@ -19,7 +19,10 @@ const DYNAMIC_DATA_STORAGE = [
   ];
 
 const findData = (query) =>{
-  const result = DYNAMIC_DATA_STORAGE.filter(item => item.id === 'first-post');
+  // not working
+  const result = DYNAMIC_DATA_STORAGE.filter((item) => {
+    return eval(`with (item) { ${query} }`);
+  }); 
   return result;
 };
 
