@@ -1,4 +1,6 @@
-const { parseQueryString }  = require('./queryParser') ;
+var url = require('url');
+const { parseQueryString }  = require('./queryGenerator') ;
+
 const DYNAMIC_DATA_STORAGE = [
     {
     
@@ -25,11 +27,24 @@ const findData = (query) =>{
   return result;
 };
 
-const handleGetQuery = (queryStr) => {
-  const parsedQuery = parseQueryString(queryStr);
-  // validation needed for the param
-  const result = findData(parsedQuery);
-  return result;
+const isValidURL = (urlStr) => {
+  var url_parts = url.parse(urlStr, true);
+  if(url_parts && url_parts.search > 0) {
+      return true;
+  } else {
+    return false;
+  }
+};
+
+const handleGetQuery = (urlStr, query) => {
+  if (isValidURL(urlStr)) {
+    console.log(`internal query string for Array filter : ${query}`);
+    const parsedQuery = parseQueryString(query);
+    const result = findData(parsedQuery);
+    return result;
+  } else {
+    return null;
+  }
 }
 
  module.exports = {handleGetQuery};

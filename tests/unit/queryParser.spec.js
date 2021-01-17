@@ -1,4 +1,4 @@
-const { parseQueryString }  = require('../../handler/queryParser') ;
+const { parseQueryString }  = require('../../handler/queryGenerator') ;
 const mockPostData = require('../data/dummyData.json');
 
 describe("parseQueryString", () => {
