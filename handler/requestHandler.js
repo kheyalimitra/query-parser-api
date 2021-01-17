@@ -42,9 +42,13 @@ const handleGetQuery = (req) => {
   if (isValidURL(req)) {
     const { query } = req.query;
     console.log(`internal query string for Array filter : ${query}`);
-    const parsedQuery = parseQueryString(query);
-    const result = findData(parsedQuery);
-    return result;
+    if (query) {
+      const parsedQuery = parseQueryString(query);
+      return findData(parsedQuery);
+    } else {
+      return Object.values(DYNAMIC_DATA_STORAGE);
+    }
+
   } else {
     return null;
   }

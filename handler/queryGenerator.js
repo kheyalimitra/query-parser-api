@@ -99,7 +99,7 @@ const SYMBOL_TO_OPERATORS =
     return { modifedQuerey, keyValMap };
   }
 
-  const convertPrefixToInfix = (modifedQuerey, keyValMap, itemName='item') => {
+  const convertPrefixToInfix = (modifedQuerey, keyValMap) => {
     let
     response = '',
     operators = [],
