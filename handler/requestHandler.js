@@ -1,4 +1,4 @@
-var url = require('url');
+const validUrl = require('valid-url');
 const { parseQueryString }  = require('./queryGenerator') ;
 
 const DYNAMIC_DATA_STORAGE = [
@@ -27,17 +27,20 @@ const findData = (query) =>{
   return result;
 };
 
-const isValidURL = (urlStr) => {
-  var url_parts = url.parse(urlStr, true);
-  if(url_parts && url_parts.search > 0) {
-      return true;
+const isValidURL = (req) => {
+
+  const urlStr = `${req.protocol}://${req.get('host')}/${req.url}`;
+  const isValid = validUrl.isUri(urlStr);
+  if (validUrl.isUri(urlStr)) {
+    return true;
   } else {
     return false;
   }
 };
 
-const handleGetQuery = (urlStr, query) => {
-  if (isValidURL(urlStr)) {
+const handleGetQuery = (req) => {
+  if (isValidURL(req)) {
+    const { query } = req.query;
     console.log(`internal query string for Array filter : ${query}`);
     const parsedQuery = parseQueryString(query);
     const result = findData(parsedQuery);
@@ -45,6 +48,30 @@ const handleGetQuery = (urlStr, query) => {
   } else {
     return null;
   }
-}
+};
 
- module.exports = {handleGetQuery};
+const getStoreDetails = (req, res) => {
+  try {
+    const result = handleGetQuery(req);
+    console.log ('result from handleGetQuery', result);
+    if (result) {
+      if (result.length > 0) {
+        res.status(200).json(result);
+      }
+      else {
+        //no data found
+        res.status(200).send({ response: "no data found" });
+      }
+    }
+    else {
+      console.log('Invalid request.');
+      res.status(400).send({ error: 'bad request.' });
+    }
+  }
+  catch (error) {
+    console.log(`error has occured: ${error}`);
+    res.status(500).send({ error: 'something went wrong, please try with valid query.' });
+  }
+};
+
+ module.exports = {getStoreDetails};
