@@ -8,6 +8,8 @@ Detailed functionality is give below:
 ### Number of APIs : 2
 ### /store?query=EQUAL(id,"abc")
 Method: GET 
+
+
 Result
 ```
 200 OK
@@ -22,6 +24,8 @@ Result
 ```
 ### /store
 Method: POST
+
+
 Body
 ```
 {
