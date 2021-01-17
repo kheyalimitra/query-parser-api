@@ -1,5 +1,4 @@
 const { parseQueryString }  = require('../../handler/queryGenerator') ;
-const mockPostData = require('../data/dummyData.json');
 
 describe("parseQueryString", () => {
     it('should parse AND(EQUAL(id,"first-post"),EQUAL(views,100)) to id="first-post" AND views = 100', () => {

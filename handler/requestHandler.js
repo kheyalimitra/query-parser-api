@@ -1,7 +1,7 @@
 const validUrl = require('valid-url');
 const { parseQueryString }  = require('./queryGenerator') ;
 
-const DYNAMIC_DATA_STORAGE = {
+let DYNAMIC_DATA_STORAGE = {
   "first-post" : {
     "id": "first-post",
     "title": "My First Post",
@@ -18,6 +18,9 @@ const DYNAMIC_DATA_STORAGE = {
   }
 };
 
+const populateDataStorage = (data) => {
+  DYNAMIC_DATA_STORAGE = Object.assign(DYNAMIC_DATA_STORAGE, data);
+}
 const isValidURL = (req) => {
   const urlStr = `${req.protocol}://${req.get('host')}/${req.url}`;
   if (validUrl.isUri(urlStr)) {
@@ -52,21 +55,21 @@ const getStoreDetails = (req, res) => {
     const result = handleGetQuery(req);
     if (result) {
       if (result.length > 0) {
-        res.status(200).send(result);
+        res.status(200).json(result);
       }
       else {
         //no data found
-        res.status(200).send({ response: "no data found" });
+        res.status(200).json({ response: "no data found" });
       }
     }
     else {
       console.log('Invalid request.');
-      res.status(400).send({ error: 'bad request.' });
+      res.status(400).json({ error: 'bad request.' });
     }
   }
   catch (error) {
     console.log(`error has occured: ${error}`);
-    res.status(500).send({ error: 'something went wrong, please try with valid query.' });
+    res.status(500).json({ error: 'something went wrong, please try with valid query.' });
   }
 };
 
@@ -92,17 +95,21 @@ const postStoreDetails = (req, res) => {
   try {
     const result = handlePostRequest(req);
     if (result) {
-      res.status(200).send({});
+      res.status(200).json({});
     }
     else {
       console.log('Invalid request.');
-      res.status(400).send({ error: 'bad request.' });
+      res.status(400).json({ error: 'bad request.' });
     }
   }
   catch (error) {
     console.log(`error has occured: ${error}`);
-    res.status(500).send({ error: 'something went wrong, please try with valid request.' });
+    res.status(500).json({ error: 'something went wrong, please try with valid request.' });
   }
 };
 
- module.exports = {getStoreDetails, postStoreDetails};
+ module.exports = {
+   getStoreDetails,
+   postStoreDetails,
+   populateDataStorage,
+};
