@@ -51,22 +51,25 @@ All files           |   91.47 |    79.49 |     100 |   91.41 |
 --------------------|---------|----------|---------|---------|--------------------------------
 ```
 ### File Structure
-handler                                  
-|- queryGenerator.js   (Takes the Query string and convert from Prefix to infix operation)                    
-|- requestHandler.js   (Handles get and post endpoints)
-|- index.js
+```
+handler 
+|
+| -  queryGenerator.js   (Takes the Query string and convert from Prefix to infix operation)                    
+| - requestHandler.js   (Handles get and post endpoints)
+| - index.js
 routes
-|- index.js
-|- swagger.json (Documents explaining the endpoints)
+|
+| - index.js
+| - swagger.json (Documents explaining the endpoints)
 tests
-|-data
+|- data
    |- dummyData.js
-|- controller
-   |- requestHandler.spec.js (test cases covering methods from requestHandler) 
-|- unit
-   |- queryParser.spec.js   (test cases covering methods from queryGenerator)
-|- server.js (running the server)
-
+| - controller
+   | - requestHandler.spec.js (test cases covering methods from requestHandler) 
+| - unit
+   | - queryParser.spec.js   (test cases covering methods from queryGenerator)
+| - server.js (running the server)
+```
 #### Demo
 
 ### Swagger Doc
