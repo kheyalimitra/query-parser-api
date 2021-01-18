@@ -1,0 +1,126 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "This is a sample server for GET and Post request implemented using Express js.",
+      "version": "1.0.0",
+      "title": "Simple API"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "API Endpoints",
+        "description": "Only two endpoints are supported GET, POST"
+      }
+    ],
+    "schemes": [
+      "http"
+    ],
+    "paths": {
+      "/store": {
+        "post": {
+          "tags": [
+            "Post"
+          ],
+          "summary": "Add a new post to the store",
+          "description": "",
+          "operationId": "addPost",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Example of request body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/PostBody"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "400": {
+              "description": "Bad input"
+            }
+          }
+        }
+      },
+      "/store?query=<>": {
+        "get": {
+          "tags": [
+            "GET"
+          ],
+          "summary": "Get posts based on query",
+          "description": "",
+          "operationId": "getPost",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "query",
+              "in": "query",
+              "description": "EQUAL(id,'test1')",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "examples": {
+                "content": "Hello World!",
+                "id": "first-post",
+                "timestamp": 1555832341,
+                "title": "My First Post",
+                "views": 100
+              }
+            },
+            "400": {
+              "description": "Bad input"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "PostBody": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "test1"
+          },
+          "content": {
+            "type": "string",
+            "example": "Hello"
+          },
+          "title": {
+            "type": "string",
+            "example": "doggie"
+          },
+          "views": {
+            "type": "number",
+            "example": 100
+          },
+          "timestamp": {
+            "type": "number",
+            "example": 1555832341
+          }
+        }
+      }
+    }
+  }
