@@ -65,7 +65,7 @@ BUT, Nested queries like `OR(AND(EQUAL(id,"first-post"),EQUAL(views,100))),GREAT
  - Finally, convert prefix to infix and generate valid query string. `AND(EQUAL(id,"first-post"),EQUAL(views,1))` => `id === 'first-post' && view === 1` 
  
 ## Demo
-
+https://www.loom.com/share/585de9825cd6418cbd646d2ee1da8112
 ## Swagger Doc
 Try out the doc:  http://54.213.94.227:3000/api-docs/#/
 
