@@ -5,8 +5,8 @@ This is a toy api intending to showcase RESTAPI implementation using Node-Expres
 
 ### END point Details
 Detailed functionality is give below:
-### Number of APIs : 2
-#### /store?query=EQUAL(id,"abc")
+#### Number of APIs : 2
+##### /store?query=EQUAL(id,"abc")
 Method: GET 
 
 Result
@@ -21,7 +21,7 @@ Result
 "timestamp": 1555832341
 }
 ```
-#### /store
+##### /store
 Method: POST
 Body
 ```
@@ -37,6 +37,52 @@ Result
 ```
 200 OK
 ```
+# Technical Details
+- Node framework
+- Javascript (ES6) language
+- Express server
+- Jest based test suit
+- Valid url to validate the url 
+- swagger-ui-express and swagger-jsdoc for api documentation and trying it out 
+
+## Assumption and considerations
+- In this implementaion, I have covered only first level query structure. Meaning, all of the following queries can be parsed and executed
+```
+OR(EQUAL(id,"first-post"),EQUAL(views,100))
+AND(EQUAL(id,"first-post"),EQUAL(views,1))
+NOT(EQUAL(id,"first-post"))
+GREATER_THAN(views, 2)
+LESS_THAN(views, 20)
+```
+BUT, Nested queries like `OR(AND(EQUAL(id,"first-post"),EQUAL(views,100))),GREATER_THAN(views, 2)) ` is <b> NOT SUPPORTED </b>.
+ #### Query parser 
+ The query string looks like <b> prefix</b> operation expression. Hence I have decided to break down the following: 
+ - First convert `AND(EQUAL(id,"first-post"),EQUAL(views,1))`  to `A(E(id,"first-post"),E(views,1))`. In this way, it is easy to process.
+ - Second, Process Scalar operations like Greater than, Less than, Equal. Hence, `A(E(id,"first-post"),E(views,1))` to `A(key1,key2)` and store this value in a dictionary. `key1: "id === 'first-post'" ` [ Note: === is beause it is Javascript] 
+ - Third, Handle special case of NOT. A valid NOT operation MUST be followed by EQUAL operation.So, find NOT operation, replace the dictionary entry with `!==`; and further simplify the query string with the key. By now, the modified query string will look like `A(key1, key2)` or scalar operation will look like `key1` 
+ - Fourth, remove all `(`, `)` , and `,` and replace with space. 
+ - Fifth, the query is `A key1 key2 `. This looks like prefix operation. This is ready for infix operation. 
+ - Finally, convert prefix to infix and generate valid query string. `AND(EQUAL(id,"first-post"),EQUAL(views,1))` => `id === 'first-post' && view === 1` 
+ 
+## Demo
+
+## Swagger Doc
+Try out the doc:  http://54.213.94.227:3000/api-docs/#/
+
+### How to run this server
+I am using Amazon EC2 freetier instace to host this and running it from there. 
+Host is : `"54.213.94.227:3000/store"`
+
+However, if you want to try  out,  there are dependencies. 
+- nvm to isntall Node (latest version) 
+- install npm 
+- clone this repo
+- go to the folder (query-parser-api)/ 
+- run `npm install`
+- execute script:  `npm run start`
+
+this should start running on port `3000`. 
+ 
 ### Test Case coverage report 
 ```
 --------------------|---------|----------|---------|---------|--------------------------------
@@ -70,7 +116,4 @@ tests
    | - queryParser.spec.js   (test cases covering methods from queryGenerator)
 | - server.js (running the server)
 ```
-#### Demo
 
-### Swagger Doc
-Try out the doc:  http://54.213.94.227:3000/api-docs/#/
